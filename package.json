@@ -42,5 +42,8 @@
     "dotenv": "^16.3.1",
     "electron": "^26.2.4",
     "electron-squirrel-startup": "^1.0.0"
+  },
+  "engines": {
+    "node": "20.4.0"
   }
 }
