@@ -1,7 +1,8 @@
 require("update-electron-app")();
 
 const { menubar } = require("menubar");
-const Nucleus = require("nucleus-analytics");
+const { initialize, trackEvent } = require("@aptabase/electron/main");
+// const { trackEvent } =  require("@aptabase/electron/main");
 
 const path = require("path");
 const {
@@ -18,21 +19,24 @@ const image = nativeImage.createFromPath(
   path.join(__dirname, `images/newiconTemplate.png`)
 );
 
+
+initialize("A-EU-3747915657"); // 👈 this is where you enter your App Key
 app.on("ready", () => {
-  Nucleus.init("638d9ccf4a5ed2dae43ce122");
+  // Nucleus.init("638d9ccf4a5ed2dae43ce122");
+  trackEvent("app_started"); // An event with no properties
 
   const tray = new Tray(image);
-
   const mb = menubar({
     browserWindow: {
       icon: image,
       transparent: path.join(__dirname, `images/iconApp.png`),
+      // type: 'toolbar',
       webPreferences: {
         webviewTag: true,
-        // nativeWindowOpen: true,
+        nativeWindowOpen: true,
       },
-      width: 450,
-      height: 550,
+      width: 370,
+      height: 750,
     },
     tray,
     showOnAllWorkspaces: true,
@@ -41,9 +45,38 @@ app.on("ready", () => {
     icon: image,
   });
 
+  function toggle(darkMode) {
+    let q = document.querySelectorAll('#nightify')
+    if(q.length) {
+      q[0].parentNode.removeChild(q[0])
+    }
+    var h = document.getElementsByTagName('head')[0],
+        s = document.createElement('style');
+    s.setAttribute('type', 'text/css');
+    s.setAttribute('id', 'nightify');
+    if (darkMode) {
+      s.appendChild(document.createTextNode('html{-webkit-filter:invert(100%) hue-rotate(180deg) contrast(70%) !important; background: #111;} img, video { -webkit-filter: invert(100%) hue-rotate(180deg) contrast(70%) !important; } .line-content {background-color: #222;}'));
+    } else {
+      s.appendChild(document.createTextNode('html{-webkit-filter:invert(0%) hue-rotate(0deg) contrast(100%) !important; background: #fff;} img, video { -webkit-filter: invert(0%) hue-rotate(0deg) contrast(100%) !important; } .line-content {background-color: #fefefe;}'));
+    }
+    h.appendChild(s); 
+  }
+
+  function setTheme(theme) {
+    if (theme === 'light') {
+      toggle(false);
+      localStorage.setItem('mode', 'light');
+    } else if (theme === 'dark') {
+      toggle(true);
+      localStorage.setItem('mode', 'dark');
+    } else if (theme === 'system') {
+      toggle(darkMode);
+      localStorage.setItem('mode', 'system');
+    }
+  }
+  
   mb.on("ready", () => {
     const { window } = mb;
-
 
     if (process.platform !== "darwin") {
       window.setSkipTaskbar(true);
@@ -70,7 +103,7 @@ app.on("ready", () => {
       {
         label: "Open in browser",
         click: () => {
-          shell.openExternal("https://chat.openai.com/chat");
+          shell.openExternal("https://friend.tech");
         },
       },
       {
@@ -79,14 +112,94 @@ app.on("ready", () => {
       {
         label: "View on GitHub",
         click: () => {
-          shell.openExternal("https://github.com/vincelwt/chatgpt-mac");
+          shell.openExternal("https://github.com/agustif/friendtech-menubar-app");
         },
       },
       {
-        label: "Author on Twitter",
+        label: "Agusti on Twitter",
         click: () => {
-          shell.openExternal("https://twitter.com/vincelwt");
+          shell.openExternal("https://twitter.com/0xAgusti");
         },
+      },
+      {
+        type: "separator",
+      },
+      {
+        label: "Go to Home",
+        accelerator: "CommandOrControl+Shift+H",
+        click: () => {
+          window.webContents.loadURL("https://friend.tech/portfolio");
+        },
+      },
+      {
+        label: "Go to Chats",
+        accelerator: "CommandOrControl+Shift+C",
+        click: () => {
+          window.webContents.loadURL("https://friend.tech/chats");
+        },
+      },
+      {
+        label: "Go to Watchlist",
+        accelerator: "CommandOrControl+Shift+W",
+        click: () => {
+          window.webContents.loadURL("https://friend.tech/watchlist");
+        },
+      },
+      {
+        label: "Go to Explore/Search",
+        accelerator: "CommandOrControl+Shift+S",
+        click: () => {
+          window.webContents.loadURL("https://friend.tech/search");
+        },
+      },
+      {
+        label: "Go to Airdrop",
+        accelerator: "CommandOrControl+Shift+A",
+        click: () => {
+          window.webContents.loadURL("https://friend.tech/airdrop");
+        },
+      },
+      {
+        label: "Go to Account Settings",
+        accelerator: "CommandOrControl+Shift+.",
+        click: () => {
+          window.webContents.loadURL("https://friend.tech/account");
+        },
+      },
+      {
+        label: "Theme",
+        submenu: [
+          {
+            label: "Light",
+            type: "radio",
+            checked: mb.window.webContents.executeJavaScript(
+              `window.matchMedia('(prefers-color-scheme: light)').matches || window.matchMedia('(prefers-color-scheme: no-preference)').matches || window.localStorage.getItem('mode') === 'light'`
+            ),
+            click: () => {
+              setTheme("light");
+            },
+          },
+          {
+            label: "Dark",
+            type: "radio",
+            checked: mb.window.webContents.executeJavaScript(
+              `window.matchMedia('(prefers-color-scheme: dark)').matches || window.localStorage.getItem('mode') === 'dark'`
+            ),
+            click: () => {
+              setTheme("dark");
+            },
+          },
+          {
+            label: "System",
+            type: "radio",
+            checked: mb.window.webContents.executeJavaScript(
+              `window.localStorage.getItem('mode') === 'system'`
+            ),
+            click: () => {
+              setTheme("system");
+            },
+          },
+        ],
       },
     ];
 
@@ -100,9 +213,8 @@ app.on("ready", () => {
         ? mb.tray.popUpContextMenu(Menu.buildFromTemplate(contextMenuTemplate))
         : null;
     });
-    const menu = new Menu();
 
-    globalShortcut.register("CommandOrControl+Shift+g", () => {
+    globalShortcut.register("CommandOrControl+Shift+y", () => {
       if (window.isVisible()) {
         mb.hideWindow();
       } else {
@@ -114,12 +226,12 @@ app.on("ready", () => {
       }
     });
 
-    Menu.setApplicationMenu(menu);
-
-    // open devtools
-    // window.webContents.openDevTools();
-
     console.log("Menubar app is ready.");
+
+    // Set window properties
+    window.setAlwaysOnTop(true, "floating");
+    window.setVisibleOnAllWorkspaces(true);
+    window.setFullScreenable(false);
   });
 
   app.on("web-contents-created", (e, contents) => {
@@ -157,26 +269,28 @@ app.on("ready", () => {
     });
   }
 
-  // open links in new window
-  // app.on("web-contents-created", (event, contents) => {
-  //   contents.on("will-navigate", (event, navigationUrl) => {
-  //     event.preventDefault();
-  //     shell.openExternal(navigationUrl);
-  //   });
-  // });
+  // open links in same window
+  app.on("web-contents-created", (event, contents) => {
+    contents.on("will-navigate", (event, navigationUrl) => {
+      // do not prevent default behavior
+      trackEvent("visited", {
+        url: navigationUrl,
+      }); // An event with no properties
+    });
+  });
 
   // prevent background flickering
   app.commandLine.appendSwitch(
     "disable-backgrounding-occluded-windows",
     "true"
   );
-});
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  // Quit when all windows are closed, except on macOS. There, it's common
+  // for applications and their menu bar to stay active until the user quits
+  // explicitly with Cmd + Q.
+  app.on("window-all-closed", () => {
+    if (process.platform !== "darwin") {
+      app.quit();
+    }
+  });
 });

@@ -1,46 +1,46 @@
 {
-  "name": "chatgpt-mac",
-  "productName": "chatgpt-mac",
-  "version": "0.0.5",
-  "description": "Menubar app for ChatGPT",
+  "name": "friendtech-menubar-app",
+  "productName": "friendtech-menubar-app",
+  "version": "0.0.1",
+  "description": "Menubar app for Friend.Tech",
   "main": "index.js",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-forge package --arch arm64,x64",
+    "package": "electron-forge package --arch arm64,x64,universal",
     "make": " electron-forge make --arch arm64,x64",
     "publish": "electron-forge publish --arch arm64,x64",
     "lint": "echo \"No linting configured\""
   },
   "keywords": [
-    "chatgpt",
-    "openai",
-    "mac"
+    "friendtech",
+    "menubar"
   ],
   "author": {
-    "name": "Vince Loewe",
-    "email": "vince@lyser.io"
+    "name": "Agusti Fernandez Pardo",
+    "email": "me@agusti.me"
   },
   "license": "MIT",
   "dependencies": {
-    "electron-context-menu": "^3.6.0",
-    "menubar": "^9.2.3",
-    "nucleus-analytics": "^4.0.3",
+    "@aptabase/electron": "^0.2.2",
+    "cookie": "^0.5.0",
+    "electron-context-menu": "^3.6.1",
+    "menubar": "^9.3.0",
     "update-electron-app": "^2.0.1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vincelwt/chatgpt-mac"
+    "url": "https://github.com/agustif/friendtech-menubar-app"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.4",
-    "@electron-forge/maker-deb": "^6.0.4",
-    "@electron-forge/maker-dmg": "^6.0.4",
-    "@electron-forge/maker-rpm": "^6.0.4",
-    "@electron-forge/maker-squirrel": "^6.0.4",
-    "@electron-forge/maker-zip": "^6.0.4",
-    "@electron-forge/publisher-github": "^6.0.4",
-    "dotenv": "^16.0.3",
-    "electron": "^21.0.0",
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-deb": "^6.4.2",
+    "@electron-forge/maker-dmg": "^6.4.2",
+    "@electron-forge/maker-rpm": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "@electron-forge/publisher-github": "^6.4.2",
+    "dotenv": "^16.3.1",
+    "electron": "^26.2.4",
     "electron-squirrel-startup": "^1.0.0"
   }
 }

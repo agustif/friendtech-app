@@ -2,50 +2,63 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>ChatGPT</title>
+    <title>Friend.Tech</title>
     <link rel="stylesheet" href="index.css" />
   </head>
-  <body class="myarrow">
+  <body>
     <div class="page darwin">
-    <webview id="webview" src="https://chat.openai.com/chat" autosize="on" >
-   </webview>
-  </div>
+      <div class="mode-selector">
+        <label for="mode-select">Select mode:</label>
+        <select id="mode-select">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      <webview id="webview" src="https://friend.tech" autosize="on" >
+      </webview>
+    </div>
     <script>
-    const webview = document.getElementById('webview');
-    webview.addEventListener('dom-ready', function() {
+      const webview = document.getElementById('webview');
+      const modeSelect = document.getElementById('mode-select');
+      const darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-      // hide message below text input, sidebar, suggestions on new chat
-      webview.insertCSS(`
-        .text-xs.text-center {
-          opacity: 0;
-          height: 0;
-          margin-bottom: -10px;
+      function toggle(darkMode) {
+        let q = document.querySelectorAll('#nightify')
+        if(q.length) {
+          q[0].parentNode.removeChild(q[0])
         }
-        
-        .sticky,
-        .pointer-events-auto.flex.border-orange-500,
-        [class*="shared__Capabilities"] {
-          display: none !important;
+        var h = document.getElementsByTagName('head')[0],
+            s = document.createElement('style');
+        s.setAttribute('type', 'text/css');
+        s.setAttribute('id', 'nightify');
+        if (darkMode) {
+          s.appendChild(document.createTextNode('html{-webkit-filter:invert(100%) hue-rotate(180deg) contrast(70%) !important; background: #111;} img, video { -webkit-filter: invert(100%) hue-rotate(180deg) contrast(70%) !important; } .line-content {background-color: #222;}'));
+        } else {
+          s.appendChild(document.createTextNode('html{-webkit-filter:invert(0%) hue-rotate(0deg) contrast(100%) !important; background: #fff;} img, video { -webkit-filter: invert(0%) hue-rotate(0deg) contrast(100%) !important; } .line-content {background-color: #fefefe;}'));
         }
+        h.appendChild(s); 
+      }
 
-        [class*="shared__Wrapper"] {
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          margin-top: 15vh;
+      toggle(darkMode);
+
+      modeSelect.addEventListener('change', e => {
+        const mode = e.target.value;
+        if (mode === 'system') {
+          toggle(darkMode);
+        } else if (mode === 'light') {
+          toggle(false);
+        } else if (mode === 'dark') {
+          toggle(true);
         }
+      });
 
-        [class*="shared__Wrapper"] h3 {
-          margin-top: -40px;
-          font-size: 20px;
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        darkMode = e.matches;
+        if (modeSelect.value === 'system') {
+          toggle(darkMode);
         }
-      `)
-
-      const element = webview.executeJavaScript(`
-        document.querySelector("[class*='shared__Wrapper']").innerHTML += "<h3>Start by asking anything.</h3>"
-      `);
-    });
-
+      });
     </script>
   </body>
 </html>
