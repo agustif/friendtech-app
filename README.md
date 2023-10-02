@@ -90,3 +90,7 @@ Please do give him a follow on twitter [@vincelwt](https://twitter.com/vincelwt)
 This app is currently not notarised, so you will probably have to explicitly open it from the privacy and security settings in your mac the first time you run it.
 
 We might offer notarised binaries in the future.
+
+## Versions
+
+- alpha initial release (2/10/2023)
