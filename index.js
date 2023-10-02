@@ -116,6 +116,12 @@ app.on("ready", () => {
         },
       },
       {
+        label: "Go to Agusti's FT Room",
+        click: () => {
+          window.webContents.loadURL("https://www.friend.tech/rooms/0xf5e9a212c15aa67a7658048f59ec3e88bc9c0ea2");
+        },
+      },
+      {
         label: "Agusti on Twitter",
         click: () => {
           shell.openExternal("https://twitter.com/0xAgusti");
